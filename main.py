@@ -1,7 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import xlwt
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 wb = xlwt.Workbook()
 urlLogin = 'https://fit.ba/student/login.aspx?ReturnUrl=%2fstudent'
 
@@ -13,8 +16,8 @@ post_data = {
     '__VIEWSTATEGENERATOR': '630CEE1E',
     'btnPrijava': 'Prijava',
     'listInstitucija': '1',
-    'txtBrojDosijea': '',
-    'txtLozinka': ''
+    'txtBrojDosijea': os.getenv("USER_INDEX_NUMBER"),
+    'txtLozinka': os.getenv("USER_PASSWORd")
 }
 
 post_headers = {
@@ -29,6 +32,8 @@ response = requests.post(url=urlLogin, data=post_data, headers=post_headers)
 result = BeautifulSoup(response.content, 'html.parser')
 
 ws = wb.add_sheet('Sheet 1')
+
+print(result.title.text.strip())
 
 if result.title.text.strip() == 'DLWMS - Studentski online servis':
     news_list = result.select('ul', _class="newslist")
